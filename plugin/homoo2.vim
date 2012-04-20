@@ -134,7 +134,7 @@ endfunction
 
 function! s:GDocInit(doc)
   let a:doc.title = 'Homoo2'
-  let a:doc.wait = '66m'
+  let a:doc.wait = '33m'
   let a:doc.agents = []
   let a:doc.random_seed = 123456
   for id in s:ROWS
@@ -164,24 +164,6 @@ endfunction
 
 "===========================================================================
 " Homoo functions.
-
-let s:HOMOO_PATTERN = [
-      \ '┌(┌  ^ o^)┐  ',
-      \ '┌(┌  ^ o^)┐ﾎﾓ',
-      \ '┌(└  ^ o^)┐ﾎﾓ',
-      \ '┌(  ┘^ o^)┐ﾎﾓ',
-      \ '┌(  ┐^ o^)┐ﾎﾓ',
-      \ '┌(  ┐^ o^)┐ﾓｫ',
-      \ '└(  ┐^ o^)┐ﾓｫ',
-      \ '  (┘┐^ o^)┐ﾓｫ',
-      \ '  (┐┐^ o^)┐ﾓｫ',
-      \ '  (┐┐^ o^)┐ｫ.',
-      \ '≡=( =  ^ o^) ｫ.',
-      \ '≡┌(┌  ^ o^)ｫ.',
-      \ '  ┌(┌  ^ o^)..',
-      \ '  ┌(┌  ^ o^)┘',
-      \ '  ┌(┌  ^ o^)┐',
-      \]
 
 let s:HOMOO_PATTERN2 = [
       \[
@@ -224,11 +206,24 @@ let s:HOMOO_PATTERN2 = [
 
 function! s:HomooNew(doc, id)
   let homoo = {}
-  let homoo.pindex = 0
-  let homoo.pos = 0
   let homoo.line = a:id
-  let homoo.speed = s:HomooRandom(a:doc, 10) * 5 + 55
+  call s:HomooInit(a:doc, homoo)
   return homoo
+endfunction
+
+function! s:HomooInit(doc, agent)
+  if s:HomooRandom(a:doc, 100) < 50
+    let a:agent.patternNum = 0
+    let a:agent.pattern = s:HOMOO_PATTERN2[0]
+    let a:agent.pos = 0
+    let a:agent.diff = 1
+  else
+    let a:agent.patternNum = 0
+    let a:agent.pattern = s:HOMOO_PATTERN2[1]
+    let a:agent.pos = a:doc.width / 2 - 8
+    let a:agent.diff = -1
+  endif
+  let a:agent.speed = s:HomooRandom(a:doc, 10) * 5 + 55
 endfunction
 
 function! s:HomooDraw(doc, agent)
@@ -236,7 +231,7 @@ function! s:HomooDraw(doc, agent)
 
   let start = a:agent.pos * 2
   let end = start + 18
-  let ptrn = s:HOMOO_PATTERN[a:agent.pindex]
+  let ptrn = a:agent.pattern[a:agent.patternNum]
   let str = substitute(str, '\%>'.start.'v.*\%<'.end.'v', ptrn, '')
 
   let a:doc.screenBuffer[a:agent.line] = str
@@ -246,13 +241,12 @@ function! s:HomooUpdate(doc, agent)
   if s:HomooRandom(a:doc, 100) >= a:agent.speed
     return
   endif
-  let a:agent.pindex += 1
-  if a:agent.pindex >= len(s:HOMOO_PATTERN)
-    let a:agent.pindex = 0
-    let a:agent.pos += 1
-    if a:agent.pos >= a:doc.width / 2 - 7
-      let a:agent.pos = 0
-      let a:agent.speed = s:HomooRandom(a:doc, 10) * 5 + 55
+  let a:agent.patternNum += 1
+  if a:agent.patternNum >= len(a:agent.pattern)
+    let a:agent.patternNum = 0
+    let a:agent.pos += a:agent.diff
+    if a:agent.pos < 0 || a:agent.pos >= a:doc.width / 2 - 7
+      call s:HomooInit(a:doc, a:agent)
     endif
   endif
 endfunction
