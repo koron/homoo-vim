@@ -48,21 +48,22 @@ function! s:GameOpen()
   set undolevels=-1
   setlocal nolist
   " Initialize screen buffer
-  let doc = {}
-  let doc.width = winwidth('.') - &foldcolumn
-  call s:GameResetScreenBuffer(doc)
   "call s:ColorInit()
+  let doc = s:GameDocNew()
   call s:GDocInit(doc)
   return doc
 endfunction
 
-function! s:GameResetScreenBuffer(doc)
-  let newbuf = []
-  let s = repeat(' ', a:doc.width)
+function! s:GameDocNew()
+  let doc = {}
+  let doc.width = winwidth('.') - &foldcolumn
+  let doc.backgroundBuffer = []
+  let s = repeat(' ', doc.width)
   for i in s:ROWS
-    call add(newbuf, s)
+    call add(doc.backgroundBuffer, s)
   endfor
-  let a:doc.screenBuffer = newbuf
+  let doc.screenBuffer = copy(doc.backgroundBuffer)
+  return doc
 endfunction
 
 function! s:GameMain(doc)
@@ -70,7 +71,7 @@ function! s:GameMain(doc)
   while running
     call s:GameDraw(a:doc)
     execute 'sleep ' . a:doc.wait
-    call s:GameResetScreenBuffer(a:doc)
+    let a:doc.screenBuffer = copy(a:doc.backgroundBuffer)
     let running = s:GDocUpdate(a:doc, getchar(0))
   endwhile
 endfunction
@@ -133,7 +134,7 @@ endfunction
 
 function! s:GDocInit(doc)
   let a:doc.title = 'Homoo2'
-  let a:doc.wait = '100m'
+  let a:doc.wait = '33m'
   let a:doc.agents = []
   let a:doc.random_seed = 123456
   for id in s:ROWS
