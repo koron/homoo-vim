@@ -134,7 +134,7 @@ endfunction
 
 function! s:GDocInit(doc)
   let a:doc.title = 'Homoo2'
-  let a:doc.wait = '33m'
+  let a:doc.wait = '25m'
   let a:doc.agents = []
   let a:doc.random_seed = 123456
   for id in s:ROWS
@@ -166,10 +166,20 @@ endfunction
 " Homoo functions.
 
 let s:HOMOO_PATTERN = [
-      \ '┌(┌  ^ o^)┐ﾎ ',
-      \ '┌(  ┐^ o^)┐ﾓ ',
-      \ '  ┐ ┐^ o^)┐ｫ ',
-      \ '三┌(┌  ^ o^)  ',
+      \ '┌(┌  ^ o^)┐  ',
+      \ '┌(┌  ^ o^)┐ﾎﾓ',
+      \ '┌(└  ^ o^)┐ﾎﾓ',
+      \ '┌(  ┘^ o^)┐ﾎﾓ',
+      \ '┌(  ┐^ o^)┐ﾎﾓ',
+      \ '└(  ┐^ o^)┐ﾓｫ',
+      \ '┌(  ┐^ o^)┐ﾓｫ',
+      \ '  (┘┐^ o^)┐ﾓｫ',
+      \ '  (┐┐^ o^)┐ﾓｫ',
+      \ '  (┐┐^ o^)┐ｫ.',
+      \ '≡=( =  ^ o^) ｫ.',
+      \ '≡┌(┌  ^ o^)ｫ.',
+      \ '  ┌(┌  ^ o^)..',
+      \ '  ┌(┌  ^ o^)┘',
       \ '  ┌(┌  ^ o^)┐',
       \]
 
