@@ -19,7 +19,6 @@ function! g:Homoo()
   let start = strwidth(whole) - width * 2 - s:position * 2
   let last = start + width * 2
   let retval = matchstr(whole, '\%>'.start.'v.*\%<'.last.'v')
-  let @a=whole
 
   " Update pattern and position for next frame.
   let s:pattern_index += 1
